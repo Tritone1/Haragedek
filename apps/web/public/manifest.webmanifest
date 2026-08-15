@@ -1,0 +1,12 @@
+{
+  "name": "BakuNights",
+  "short_name": "BakuNights",
+  "description": "Baku nightlife and dining discovery",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09090e",
+  "theme_color": "#09090e",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

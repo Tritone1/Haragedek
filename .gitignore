@@ -1,0 +1,40 @@
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+client_secret_*.json
+*.pem
+*.p8
+*.p12
+*.key
+*.jks
+*.mobileprovision
+
+# Logs, temp files, and generated local artifacts
+*.log
+*.tmp
+*.tsbuildinfo
+.DS_Store
+coverage/
+.expo/
+**/.expo/
+.codex/
+.agents/
+
+# Local database
+apps/api/prisma/dev.db
+
+# Local verification screenshots
+*-check.png
+admin-dashboard*.png
+merchant-dashboard*.png
+merchant-offer-form*.png
+merchant-combo-offer*.png
+ios-check.png
+android-check.png
+apps/mobile/ios-expo-go-qr.png

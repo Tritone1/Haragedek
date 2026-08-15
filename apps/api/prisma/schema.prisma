@@ -1,0 +1,251 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CONSUMER
+  MERCHANT
+  ADMIN
+}
+
+enum ClaimStatus {
+  unclaimed
+  pending_verification
+  verified
+}
+
+enum DealStatus {
+  draft
+  pending_review
+  approved
+  rejected
+  expired
+}
+
+enum ClaimRequestStatus {
+  pending
+  approved
+  rejected
+}
+
+enum DealOfferType {
+  discount
+  combo
+  set_menu
+  perk
+  event
+  bundle
+  other
+}
+
+model User {
+  id              String             @id @default(cuid())
+  email           String             @unique
+  emailVerifiedAt DateTime?          @map("email_verified_at")
+  emailVerificationToken String?     @unique @map("email_verification_token")
+  emailVerificationExpiresAt DateTime? @map("email_verification_expires_at")
+  passwordHash    String?            @map("password_hash")
+  googleId        String?            @unique @map("google_id")
+  name            String
+  role            UserRole           @default(CONSUMER)
+  homeLat         Float?             @map("home_lat")
+  homeLng         Float?             @map("home_lng")
+  preferencesJson Json?              @map("preferences_json")
+  createdAt       DateTime           @default(now()) @map("created_at")
+  ownedRestaurants Restaurant[]      @relation("RestaurantOwner")
+  savedDeals      SavedDeal[]
+  redemptions     Redemption[]
+  follows         Follow[]
+  ratings         DealRating[]
+  subscriptions   PushSubscription[]
+  claims          VenueClaimRequest[] @relation("VenueClaimRequester")
+  notificationLogs NotificationLog[]
+  submittedDeals  Deal[]              @relation("DealSubmitter")
+  reviewedDeals   Deal[]              @relation("DealReviewer")
+  auditLogs       AuditLog[]          @relation("AuditActor")
+
+  @@map("users")
+}
+
+model Restaurant {
+  id            String            @id @default(cuid())
+  googlePlaceId String?           @unique @map("google_place_id")
+  name          String
+  cuisine       String
+  dietaryTags   String[]          @default([]) @map("dietary_tags")
+  address       String
+  lat           Float
+  lng           Float
+  phone         String?
+  hoursJson     Json?             @map("hours_json")
+  photoUrl      String?           @map("photo_url")
+  rating        Float             @default(0)
+  isActive      Boolean           @default(true) @map("is_active")
+  autoApproveOffers Boolean       @default(false) @map("auto_approve_offers")
+  ownerUserId   String?           @map("owner_user_id")
+  claimStatus   ClaimStatus       @default(unclaimed) @map("claim_status")
+  verificationNotes String?       @map("verification_notes")
+  owner         User?             @relation("RestaurantOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
+  deals         Deal[]
+  followers     Follow[]
+  claims        VenueClaimRequest[]
+
+  @@map("restaurants")
+}
+
+model Deal {
+  id              String        @id @default(cuid())
+  restaurantId    String        @map("restaurant_id")
+  restaurant      Restaurant    @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  title           String
+  description     String
+  menuItem        String?       @map("menu_item")
+  offerType       DealOfferType @default(discount) @map("offer_type")
+  discountPct     Int?          @map("discount_pct")
+  tag             String
+  dietaryTags     String[]      @default([]) @map("dietary_tags")
+  startsAt        DateTime      @map("starts_at")
+  endsAt          DateTime      @map("ends_at")
+  isActive        Boolean       @default(true) @map("is_active")
+  isRecurring     Boolean       @default(false) @map("is_recurring")
+  recurrenceRule  String?       @map("recurrence_rule")
+  status          DealStatus    @default(pending_review)
+  submittedByUserId String?     @map("submitted_by_user_id")
+  submittedBy     User?         @relation("DealSubmitter", fields: [submittedByUserId], references: [id], onDelete: SetNull)
+  reviewedByUserId String?      @map("reviewed_by_user_id")
+  reviewedBy      User?         @relation("DealReviewer", fields: [reviewedByUserId], references: [id], onDelete: SetNull)
+  reviewNotes     String?       @map("review_notes")
+  submittedAt     DateTime?     @map("submitted_at")
+  reviewedAt      DateTime?     @map("reviewed_at")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  savedBy         SavedDeal[]
+  redemptions     Redemption[]
+  ratings         DealRating[]
+  views           DealView[]
+  notificationLogs NotificationLog[]
+
+  @@index([isActive, startsAt, endsAt])
+  @@map("deals")
+}
+
+model SavedDeal {
+  userId   String   @map("user_id")
+  dealId   String   @map("deal_id")
+  savedAt  DateTime @default(now()) @map("saved_at")
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deal     Deal     @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@id([userId, dealId])
+  @@map("saved_deals")
+}
+
+model Redemption {
+  id             String   @id @default(cuid())
+  userId         String   @map("user_id")
+  dealId         String   @map("deal_id")
+  claimedAt      DateTime @default(now()) @map("claimed_at")
+  redeemedAt     DateTime? @map("redeemed_at")
+  redemptionCode String   @unique @map("redemption_code")
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deal           Deal     @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, dealId])
+  @@map("redemptions")
+}
+
+model Follow {
+  userId       String     @map("user_id")
+  restaurantId String     @map("restaurant_id")
+  followedAt   DateTime   @default(now()) @map("followed_at")
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+
+  @@id([userId, restaurantId])
+  @@map("follows")
+}
+
+model DealRating {
+  userId    String   @map("user_id")
+  dealId    String   @map("deal_id")
+  value     Int
+  comment   String?
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deal      Deal     @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@id([userId, dealId])
+  @@map("deal_ratings")
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("push_subscriptions")
+}
+
+model VenueClaimRequest {
+  id           String      @id @default(cuid())
+  venueId      String      @map("venue_id")
+  requestingUserId String  @map("requesting_user_id")
+  contactPhone String      @map("contact_phone")
+  contactEmail String      @map("contact_email")
+  proofNotes   String      @map("proof_notes")
+  status       ClaimRequestStatus @default(pending)
+  createdAt    DateTime    @default(now()) @map("created_at")
+  reviewedAt   DateTime?   @map("reviewed_at")
+  venue        Restaurant  @relation(fields: [venueId], references: [id], onDelete: Cascade)
+  requestingUser User      @relation("VenueClaimRequester", fields: [requestingUserId], references: [id], onDelete: Cascade)
+
+  @@unique([requestingUserId, venueId])
+  @@map("venue_claim_requests")
+}
+
+model DealView {
+  id        String   @id @default(cuid())
+  dealId    String   @map("deal_id")
+  viewedAt  DateTime @default(now()) @map("viewed_at")
+  sessionId String?  @map("session_id")
+  deal      Deal     @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@index([dealId, viewedAt])
+  @@map("deal_views")
+}
+
+model NotificationLog {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  dealId    String   @map("deal_id")
+  kind      String
+  sentAt    DateTime @default(now()) @map("sent_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deal      Deal     @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, dealId, kind])
+  @@map("notification_logs")
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  actorUserId String?  @map("actor_user_id")
+  actor       User?    @relation("AuditActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+  action      String
+  targetType  String   @map("target_type")
+  targetId    String   @map("target_id")
+  notes       String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([targetType, targetId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
