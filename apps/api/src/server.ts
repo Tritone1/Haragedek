@@ -30,7 +30,45 @@ const currentDir = dirname(fileURLToPath(import.meta.url));
 const webDistDir = resolve(currentDir, "../../web/dist");
 
 app.set("trust proxy", 1);
-app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  contentSecurityPolicy: {
+    directives: {
+      "default-src": ["'self'"],
+      "base-uri": ["'self'"],
+      "object-src": ["'none'"],
+      "script-src": ["'self'", "https://maps.googleapis.com"],
+      "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      "font-src": ["'self'", "https://fonts.gstatic.com", "data:"],
+      "img-src": [
+        "'self'",
+        "data:",
+        "blob:",
+        "https://images.unsplash.com",
+        "https://plus.unsplash.com",
+        "https://images.pexels.com",
+        "https://maps.gstatic.com",
+        "https://*.googleapis.com",
+        "https://*.ggpht.com",
+        "https://*.googleusercontent.com",
+        "https://*.openstreetmap.org",
+      ],
+      "connect-src": [
+        "'self'",
+        "https://maps.googleapis.com",
+        "https://*.googleapis.com",
+        "https://maps.gstatic.com",
+        "https://router.project-osrm.org",
+        "https://routing.openstreetmap.de",
+      ],
+      "frame-src": [
+        "'self'",
+        "https://www.openstreetmap.org",
+        "https://www.google.com",
+      ],
+    },
+  },
+}));
 app.use(cors({
   origin(origin, callback) {
     const allowedOrigins = new Set([
