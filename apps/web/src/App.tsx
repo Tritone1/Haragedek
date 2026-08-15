@@ -133,6 +133,18 @@ function useCountdown(targetHour = 22) {
   return countdown;
 }
 
+function ImageFallback({ label, className = "" }: { label: string; className?: string }) {
+  return <div className={`grid place-items-center overflow-hidden bg-[radial-gradient(circle_at_30%_20%,rgba(245,158,11,.30),transparent_34%),linear-gradient(135deg,#181824,#07070b)] ${className}`}>
+    <div className="rounded-full border border-gold/25 bg-gold/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[.18em] text-gold">{label}</div>
+  </div>;
+}
+
+function SafeImage({ src, alt, className, fallbackLabel }: { src: string; alt: string; className: string; fallbackLabel: string }) {
+  const [failed, setFailed] = useState(false);
+  if (failed) return <ImageFallback label={fallbackLabel} className={className} />;
+  return <img src={src} alt={alt} loading="lazy" onError={() => setFailed(true)} className={className} />;
+}
+
 function SearchBox({ value, onChange, mobile = false }: { value: string; onChange: (value: string) => void; mobile?: boolean }) {
   return <label className={`relative block ${mobile ? "lg:hidden" : "hidden w-full max-w-md lg:block"}`}>
     <span className="sr-only">Search venues</span>
@@ -166,7 +178,8 @@ function MoonMark() {
 function Hero() {
   const today = new Intl.DateTimeFormat("en-US", { weekday: "long", month: "long", day: "numeric" }).format(new Date());
   return <section id="top" className="relative isolate min-h-[500px] overflow-hidden border-b border-white/[0.07]">
-    <img src={IMAGES.hero} alt="Baku illuminated at night" className="absolute inset-0 -z-20 h-full w-full object-cover object-center" />
+    <ImageFallback label="Baku nights" className="absolute inset-0 -z-30 h-full w-full" />
+    <img src={IMAGES.hero} alt="" onError={(event) => { event.currentTarget.style.display = "none"; }} className="absolute inset-0 -z-20 h-full w-full object-cover object-center" />
     <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(9,9,14,.98)_0%,rgba(9,9,14,.84)_43%,rgba(9,9,14,.26)_78%,rgba(9,9,14,.55)_100%)]" />
     <div className="absolute inset-0 -z-10 bg-[linear-gradient(0deg,#09090e_0%,transparent_42%)]" />
     <div className="mx-auto flex min-h-[500px] max-w-[1400px] items-center px-5 py-16 sm:px-8 lg:py-20">
@@ -198,7 +211,7 @@ function FlashDeals() {
     <SectionHeading eyebrow="Limited drops" title="Flash deals" action={<span className="hidden text-xs text-muted sm:block">Scroll to explore <span className="ml-1 text-gold">→</span></span>} />
     <div className="no-scrollbar -mx-5 flex snap-x gap-4 overflow-x-auto px-5 pb-3 sm:-mx-8 sm:px-8 xl:mx-0 xl:px-0">
       {VENUES.slice(0, 5).map((venue) => <article key={venue.id} className="group relative h-[310px] w-[280px] shrink-0 snap-start overflow-hidden rounded-2xl border border-white/[0.08] bg-card">
-        <img src={venue.image} alt="" className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+        <SafeImage src={venue.image} alt="" fallbackLabel={venue.category} className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-black/10" />
         <div className="absolute inset-x-0 top-0 flex items-center justify-between p-4">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-red-500/90 px-2.5 py-1 text-[9px] font-extrabold tracking-[.14em] text-white backdrop-blur"><span className="deal-pulse h-1.5 w-1.5 rounded-full bg-white" />FLASH DEAL</span>
@@ -222,7 +235,7 @@ function Star({ filled = true }: { filled?: boolean }) {
 function VenueCard({ venue, saved, onToggleSave, onNavigate }: { venue: Venue; saved: boolean; onToggleSave: () => void; onNavigate: () => void }) {
   return <article data-venue-card className="group overflow-hidden rounded-2xl border border-white/[0.07] bg-card transition-transform duration-200 hover:-translate-y-1 hover:border-white/[0.13]">
     <div className="relative h-44 overflow-hidden">
-      <img src={venue.image} alt={`${venue.name} atmosphere`} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]" />
+      <SafeImage src={venue.image} alt={`${venue.name} atmosphere`} fallbackLabel={venue.category} className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]" />
       <div className="absolute inset-0 bg-gradient-to-t from-card via-black/15 to-transparent" />
       <span className="absolute left-4 top-4 rounded-full px-2.5 py-1 text-[9px] font-extrabold tracking-[.14em] text-white shadow-lg" style={{ backgroundColor: venue.dealColor }}>{venue.dealTag}</span>
       <button onClick={onToggleSave} aria-label={saved ? `Remove ${venue.name} from saved` : `Save ${venue.name}`} className={`absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full border backdrop-blur transition ${saved ? "border-gold bg-gold text-night" : "border-white/15 bg-black/35 text-white hover:border-gold hover:text-gold"}`}><Icon name="bookmark" size={16} /></button>
@@ -507,7 +520,7 @@ function MapSection({ selected, onSelect, onTaxi, userPosition, locationStatus, 
         <div className="no-scrollbar order-2 max-h-[420px] overflow-y-auto border-t border-white/[0.07] p-3 lg:order-1 lg:max-h-none lg:border-r lg:border-t-0">
           <p className="px-2 pb-3 pt-1 text-[9px] font-bold uppercase tracking-[.2em] text-muted">All venues · {VENUES.length}</p>
           <div className="space-y-2">{VENUES.map((venue) => <button key={venue.id} onClick={() => onSelect(venue)} className={`flex w-full items-center gap-3 rounded-xl border p-2.5 text-left transition ${selected.id === venue.id ? "border-gold/50 bg-gold/[0.09]" : "border-transparent hover:border-white/[0.07] hover:bg-white/[0.035]"}`}>
-            <img src={venue.image} alt="" className="h-14 w-16 shrink-0 rounded-lg object-cover" /><span className="min-w-0 flex-1"><strong className="block truncate font-display text-[17px] font-semibold text-white">{venue.name}</strong><span className="mt-1 block truncate text-[10px] text-muted">{venue.address}</span></span><span className="shrink-0 text-[10px] font-bold text-gold">{venue.distance}</span>
+            <SafeImage src={venue.image} alt="" fallbackLabel={venue.category} className="h-14 w-16 shrink-0 rounded-lg object-cover" /><span className="min-w-0 flex-1"><strong className="block truncate font-display text-[17px] font-semibold text-white">{venue.name}</strong><span className="mt-1 block truncate text-[10px] text-muted">{venue.address}</span></span><span className="shrink-0 text-[10px] font-bold text-gold">{venue.distance}</span>
           </button>)}</div>
         </div>
         <div className="relative order-1 h-[480px] bg-[#171720] lg:order-2 lg:h-auto">
@@ -516,7 +529,7 @@ function MapSection({ selected, onSelect, onTaxi, userPosition, locationStatus, 
             <Icon name="location" size={14} />{locationStatus === "ready" ? "Your location is live" : locationStatus === "locating" ? "Finding your location…" : "Enable your location"}
           </button>
           <div className="glass absolute inset-x-3 bottom-3 flex items-center gap-3 rounded-xl p-3 sm:inset-x-auto sm:bottom-5 sm:left-5 sm:right-5 sm:p-4">
-            <img src={selected.image} alt="" className="hidden h-14 w-16 shrink-0 rounded-lg object-cover min-[430px]:block sm:h-16 sm:w-20" />
+            <SafeImage src={selected.image} alt="" fallbackLabel={selected.category} className="hidden h-14 w-16 shrink-0 rounded-lg object-cover min-[430px]:block sm:h-16 sm:w-20" />
             <div className="min-w-0 flex-1"><p className="truncate font-display text-lg font-semibold text-white sm:text-xl">{selected.name}</p><p className="truncate text-[10px] text-muted sm:text-xs">{selected.address}</p><p className={`mt-1 truncate text-[10px] font-semibold sm:text-xs ${routeState.status === "failed" ? "text-red-300" : routeState.status === "active" ? "text-cyan-300" : "text-gold"}`}>{routeDescription}</p></div>
             <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
               <button type="button" onClick={() => setModeChooserOpen(true)} disabled={routeState.status === "loading"} className="inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-xl bg-cyan-300 px-3 text-[11px] font-black text-[#07151a] transition hover:bg-cyan-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200 disabled:cursor-wait disabled:opacity-75" aria-label={`Choose in-app route to ${selected.name}`}><Icon name="location" size={15} />{routeButtonLabel}</button>

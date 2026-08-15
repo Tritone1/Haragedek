@@ -65,16 +65,11 @@ const photos = [
 ];
 
 async function main() {
-  await prisma.auditLog.deleteMany();
-  await prisma.notificationLog.deleteMany();
-  await prisma.dealView.deleteMany();
-  await prisma.dealRating.deleteMany();
-  await prisma.redemption.deleteMany();
-  await prisma.savedDeal.deleteMany();
-  await prisma.follow.deleteMany();
-  await prisma.deal.deleteMany();
-  await prisma.venueClaimRequest.deleteMany();
-  await prisma.restaurant.deleteMany();
+  const existingVenueCount = await prisma.restaurant.count();
+  if (existingVenueCount > 0) {
+    console.log(`Seed skipped: production already has ${existingVenueCount} venues.`);
+    return;
+  }
 
   const admin = await prisma.user.upsert({
     where: { email: "admin@bakunights.test" },
