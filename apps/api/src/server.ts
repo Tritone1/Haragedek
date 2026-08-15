@@ -19,6 +19,7 @@ import { merchantRouter } from "./routes/merchant.js";
 import { adminRouter } from "./routes/admin.js";
 import { pushRouter } from "./routes/push.js";
 import { placesRouter } from "./routes/places.js";
+import { setupRouter } from "./routes/setup.js";
 import { errorHandler, notFound } from "./lib/http.js";
 import { sendSavedDealExpiryNotifications } from "./lib/push.js";
 
@@ -73,6 +74,7 @@ app.use("/api/merchant", merchantRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/push", pushRouter);
 app.use("/api/places", placesRouter);
+app.use("/api/setup", setupRouter);
 
 if (env.NODE_ENV === "production" && existsSync(webDistDir)) {
   app.use(express.static(webDistDir));

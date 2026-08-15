@@ -19,6 +19,7 @@ const schema = z.object({
   VAPID_PRIVATE_KEY: z.string().optional(),
   VAPID_SUBJECT: z.string().default("mailto:hello@example.com"),
   VERIFICATION_EMAIL_FROM: z.string().email().optional(),
+  SETUP_SEED_TOKEN: z.string().min(24).optional(),
 });
 
 export const env = schema.parse(process.env);

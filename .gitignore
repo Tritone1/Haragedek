@@ -19,6 +19,7 @@ client_secret_*.json
 *.log
 *.tmp
 *.tsbuildinfo
+.railway_seed_ed25519*
 .DS_Store
 coverage/
 .expo/
