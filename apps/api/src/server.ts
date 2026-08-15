@@ -77,9 +77,20 @@ app.use("/api/places", placesRouter);
 app.use("/api/setup", setupRouter);
 
 if (env.NODE_ENV === "production" && existsSync(webDistDir)) {
-  app.use(express.static(webDistDir));
+  app.use(express.static(webDistDir, {
+    setHeaders(res, filePath) {
+      if (filePath.endsWith("index.html") || filePath.endsWith("sw.js") || filePath.endsWith("manifest.webmanifest")) {
+        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        return;
+      }
+      if (filePath.includes(`${resolve(webDistDir, "assets")}`)) {
+        res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+      }
+    },
+  }));
   app.use((req, res, next) => {
     if (req.method !== "GET" || req.path.startsWith("/api/")) return next();
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     res.sendFile(resolve(webDistDir, "index.html"));
   });
 }
