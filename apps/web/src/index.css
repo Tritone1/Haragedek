@@ -39,6 +39,31 @@ button { cursor: pointer; }
 .no-scrollbar { scrollbar-width: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .dark-map { filter: invert(.9) hue-rotate(180deg) saturate(.4) brightness(.6); }
+.baku-map-preview {
+  background:
+    radial-gradient(circle at 51% 43%, rgba(245,158,11,.28) 0 1px, transparent 2px),
+    radial-gradient(circle at 44% 52%, rgba(103,232,249,.22) 0 1px, transparent 2px),
+    linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255,255,255,.04) 1px, transparent 1px),
+    linear-gradient(135deg, #151521, #0b0b12);
+  background-size: auto, auto, 54px 54px, 54px 54px, auto;
+}
+.baku-map-preview::before,
+.baku-map-preview::after {
+  content: "";
+  position: absolute;
+  inset: -18%;
+  border: 16px solid rgba(245,158,11,.10);
+  border-left: 0;
+  border-bottom: 0;
+  border-radius: 45%;
+  transform: rotate(-18deg);
+}
+.baku-map-preview::after {
+  inset: 22% -12% -28% 30%;
+  border-color: rgba(103,232,249,.10);
+  transform: rotate(20deg);
+}
 .deal-pulse { animation: deal-pulse 2s ease-in-out infinite; }
 .panel-button { display: inline-flex; align-items: center; gap: .45rem; border-radius: .65rem; background: #67e8f9; padding: .65rem .9rem; color: #07151a; font-weight: 800; }
 .form-label { display: block; margin-bottom: .35rem; font-size: .7rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.45); }

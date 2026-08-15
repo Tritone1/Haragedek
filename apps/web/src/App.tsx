@@ -288,7 +288,17 @@ function mapEmbed(venue: Venue) {
 }
 
 function OpenStreetVenueMap({ venue }: { venue: Venue }) {
-  return <iframe key={venue.id} title={`Map showing ${venue.name}`} src={mapEmbed(venue)} className="dark-map h-full w-full border-0" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />;
+  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${venue.lat},${venue.lng}`;
+  return <div className="relative h-full w-full overflow-hidden bg-[#101018]">
+    <div className="absolute inset-0 baku-map-preview" aria-hidden="true" />
+    <iframe key={venue.id} title={`Map showing ${venue.name}`} src={mapEmbed(venue)} className="dark-map absolute inset-0 h-full w-full border-0 opacity-80" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_48%,transparent_0,transparent_18%,rgba(12,12,20,.45)_48%,rgba(12,12,20,.72)_100%)]" />
+    <div className="absolute left-1/2 top-1/2 grid -translate-x-1/2 -translate-y-full place-items-center">
+      <span className="grid h-10 w-10 place-items-center rounded-full rounded-bl-md border-4 border-[#09090e] bg-gold text-sm font-black text-night shadow-[0_12px_28px_rgba(0,0,0,.45)] rotate-[-45deg]"><span className="rotate-45">BN</span></span>
+      <span className="mt-3 rounded-full border border-white/10 bg-black/55 px-3 py-1 text-xs font-bold text-white backdrop-blur">{venue.name}</span>
+    </div>
+    <a href={googleMapsUrl} target="_blank" rel="noreferrer" className="absolute right-3 top-12 rounded-full border border-white/10 bg-black/55 px-3 py-2 text-[10px] font-bold text-white backdrop-blur transition hover:border-[#4285f4]/70 hover:text-[#8ab4f8]">Open Google Maps</a>
+  </div>;
 }
 
 function MapProviderBadge({ children }: { children: ReactNode }) {
