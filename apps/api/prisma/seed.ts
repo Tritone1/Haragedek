@@ -8,59 +8,60 @@ dotenv.config({ path: resolve(process.cwd(), "../../.env") });
 const prisma = new PrismaClient();
 
 const restaurants = [
-  ["Sunbird Diner", "American", "1201 S Congress Ave", 30.2505, -97.7491, 4.7, ["vegetarian"]],
-  ["Luna Roja", "Mexican", "1600 E 6th St", 30.2632, -97.7232, 4.8, ["vegan", "gluten-free"]],
-  ["Curry Up", "Indian", "1901 Guadalupe St", 30.2825, -97.7418, 4.6, ["vegan", "halal"]],
-  ["The Noodle Club", "Japanese", "501 W 6th St", 30.2693, -97.7481, 4.5, ["vegetarian"]],
-  ["Olive & Thyme", "Mediterranean", "2121 E Cesar Chavez St", 30.2548, -97.7178, 4.9, ["vegan", "halal", "gluten-free"]],
-  ["Hot Bird", "Southern", "801 Barton Springs Rd", 30.2604, -97.7552, 4.4, []],
-  ["Pho Real", "Vietnamese", "1100 N Lamar Blvd", 30.2769, -97.7528, 4.7, ["gluten-free"]],
-  ["Greenhouse", "Healthy", "2427 Webberville Rd", 30.2633, -97.7141, 4.6, ["vegan", "vegetarian", "gluten-free"]],
-  ["Nonna's Table", "Italian", "1417 S 1st St", 30.2495, -97.7554, 4.8, ["vegetarian"]],
-  ["Seoul Bowl", "Korean", "2000 S Lamar Blvd", 30.2481, -97.7719, 4.7, ["gluten-free"]],
-  ["Smoke Stack", "BBQ", "100 Red River St", 30.2601, -97.7384, 4.5, ["gluten-free"]],
-  ["Baker Street", "Bakery", "301 W 2nd St", 30.2645, -97.7474, 4.6, ["vegetarian"]],
-  ["Coastal Catch", "Seafood", "98 San Jacinto Blvd", 30.2615, -97.7415, 4.8, ["gluten-free"]],
-  ["Za-Zoom", "Pizza", "1501 E 5th St", 30.2610, -97.7260, 4.4, ["vegan", "vegetarian"]],
-  ["Golden Hour", "Cafe", "1700 S Lamar Blvd", 30.2520, -97.7650, 4.9, ["vegan", "vegetarian"]],
-  ["Falafel Radio", "Middle Eastern", "3101 Manor Rd", 30.2862, -97.7049, 4.7, ["vegan", "halal"]],
-  ["Bangkok Local", "Thai", "900 W Mary St", 30.2483, -97.7595, 4.6, ["vegan", "gluten-free"]],
-  ["Little Havana", "Cuban", "2300 E 7th St", 30.2624, -97.7151, 4.5, []],
+  ["Chinar Restaurant", "Azerbaijani", "Neftchilar Ave, Baku", 40.4093, 49.8671, 4.8, ["halal"]],
+  ["Sky Bar Baku", "Rooftop Bar", "JW Marriott, Baku Boulevard", 40.4112, 49.8702, 4.6, []],
+  ["Old City Pub", "Pub", "Icherisheher, Baku", 40.3660, 49.8353, 4.5, []],
+  ["Flame Lounge", "Lounge", "Flame Towers, Baku", 40.3609, 49.8373, 4.9, ["halal"]],
+  ["Caspian Bistro", "Mediterranean", "Rasul Rza St, Baku", 40.4050, 49.8600, 4.7, ["vegetarian"]],
+  ["Nargiz Cocktail Bar", "Cocktail Bar", "Nizami St 48, Baku", 40.4070, 49.8700, 4.4, []],
+  ["Dolma House", "Azerbaijani", "M.Rasulzada St, Baku", 40.3684, 49.8358, 4.7, ["halal", "vegetarian"]],
+  ["Sahil Kitchen", "Seafood", "Baku Boulevard, Baku", 40.3715, 49.8485, 4.6, ["gluten-free"]],
+  ["Fountain Square Grill", "Grill", "Fountain Square, Baku", 40.3719, 49.8376, 4.5, ["halal"]],
+  ["Nizami Sushi", "Japanese", "Nizami St, Baku", 40.3764, 49.8432, 4.6, []],
+  ["Qala Taproom", "Pub", "Aziz Aliyev St, Baku", 40.3688, 49.8370, 4.4, []],
+  ["White City Cafe", "Cafe", "Baku White City", 40.3869, 49.8753, 4.6, ["vegetarian"]],
+  ["Port Baku Trattoria", "Italian", "Port Baku, Baku", 40.3787, 49.8540, 4.8, ["vegetarian"]],
+  ["Nar & Saffron", "Fine Dining", "Khagani St, Baku", 40.3749, 49.8460, 4.9, ["halal"]],
+  ["Bulvar Burger", "Burger", "Seaside Boulevard, Baku", 40.3689, 49.8497, 4.3, ["halal"]],
+  ["Shah Plov", "Azerbaijani", "Targovi, Baku", 40.3728, 49.8398, 4.7, ["halal"]],
+  ["Mangal Steakhouse", "Steakhouse", "Badamdar, Baku", 40.3452, 49.8135, 4.6, ["halal"]],
+  ["Crescent Mocktail Club", "Mocktail Bar", "Crescent Bay, Baku", 40.3658, 49.8589, 4.5, ["vegetarian"]],
 ] as const;
 
 const titles = [
-  "Sunrise stack for less", "Two-for-one taco flight", "Curry lunch knockout", "Half-price ramen hour",
-  "Mezze platter special", "Hot chicken happy hour", "Pho lunch reset", "Build-a-bowl bonus",
-  "Pasta night steal", "Bibimbap power lunch", "Brisket plate break", "Coffee + croissant combo",
-  "Oyster hour", "Big slice, tiny price", "Golden breakfast", "Falafel feast", "Pad Thai after dark", "Cubano lunch club",
+  "Lule kebab dinner deal", "2-for-1 signature cocktails", "Happy hour pints", "VIP table package",
+  "Set dinner for two", "Ladies night welcome", "Dolma tasting plate", "Caspian seafood platter",
+  "Mixed grill combo", "Sushi roll set", "Pub snack board", "Coffee and dessert duo",
+  "Pasta night special", "Chef's tasting menu", "Burger combo", "Shah plov for two",
+  "Steak and sides", "Zero-proof cocktail flight",
 ];
 
 const descriptions = [
-  "Fluffy buttermilk pancakes, eggs, and house coffee at a weekday-friendly price.",
-  "Pick any six street tacos and get a second flight free. Dine-in only.",
-  "Choose a curry, basmati rice, naan, and a cooling mango lassi.",
-  "Any signature ramen bowl is half price during the last two hours of service.",
-  "A generous spread of hummus, baba ganoush, tabbouleh, warm pita, and falafel.",
-  "Our famous hot chicken sandwich with seasoned fries and iced tea.",
-  "A steaming bowl of pho with your choice of protein plus fresh spring rolls.",
-  "Build any grain bowl and add a cold-pressed juice on the house.",
-  "House-made pasta, seasonal sauce, and a glass of wine or sparkling water.",
-  "A sizzling bibimbap bowl with crispy rice and your favorite protein.",
-  "Slow-smoked brisket, two sides, pickles, onions, and fresh white bread.",
-  "A flaky butter croissant paired with any barista-made coffee.",
-  "Six Gulf oysters with house mignonette during weekday happy hour.",
-  "Two oversized slices and a fountain drink—the proper quick lunch.",
-  "Avocado toast, soft egg, and any small coffee before the morning rush ends.",
-  "Falafel wrap, za'atar fries, tahini slaw, and mint lemonade.",
-  "A wok-fired Pad Thai plus mango sticky rice after 8 PM.",
-  "Pressed Cubano, plantain chips, and a cafecito for your lunch break.",
+  "Lule kebab, fresh herbs, lavash, grilled tomato, and ayran for dine-in guests.",
+  "Buy one signature cocktail and get the second on the house from 6 PM to 10 PM.",
+  "Draft beers and pub bites for a friendlier after-work price.",
+  "Reserve a VIP table package and save on the full bottle-and-snacks setup.",
+  "Three-course dinner for two with salad, mains, dessert, and tea.",
+  "Free entry plus one welcome drink for ladies before midnight.",
+  "A shared Azerbaijani dolma plate with yogurt, herbs, and house bread.",
+  "Grilled fish, calamari, salad, and lemon potatoes for two people.",
+  "Chicken, lamb, lula kebab, fries, salad, and two soft drinks.",
+  "Choose any two classic rolls plus miso soup and green tea.",
+  "Wings, fries, onion rings, and sauces made for a table of friends.",
+  "Any cake slice with cappuccino, latte, or Azerbaijani tea.",
+  "House pasta, seasonal sauce, and a glass of wine or sparkling water.",
+  "A small tasting menu built around nar, saffron, local greens, and grilled meats.",
+  "Burger, fries, and a drink combo for late-night boulevard walks.",
+  "Shared shah plov with pickles, salad, and tea for two guests.",
+  "Ribeye or tenderloin with two sides and house sauce.",
+  "Three zero-proof cocktails with a snack plate for the table.",
 ];
 
 const discounts = [25, 50, 30, 50, 35, 25, 30, 20, 40, 25, 30, 35, 40, 45, 25, 30, 35, 25];
-const tags = ["breakfast", "lunch", "lunch", "dinner", "all day", "happy hour", "lunch", "all day", "dinner", "lunch", "lunch", "breakfast", "happy hour", "lunch", "breakfast", "all day", "dinner", "lunch"];
+const tags = ["dinner", "happy hour", "happy hour", "dinner", "dinner", "happy hour", "all day", "dinner", "lunch", "dinner", "happy hour", "all day", "dinner", "dinner", "lunch", "dinner", "dinner", "happy hour"];
 const photos = [
-  "photo-1552566626-52f8b828add9", "photo-1555396273-367ea4eb4db5", "photo-1515003197210-e0cd71810b5f",
-  "photo-1557872943-16a5ac26437e", "photo-1544148103-0773bf10d330", "photo-1514933651103-005eec06c04b",
+  "photo-1552566626-52f8b828add9", "photo-1555396273-367ea4eb4db5", "photo-1514933651103-005eec06c04b",
+  "photo-1544148103-0773bf10d330", "photo-1517248135467-4c7edcad34c4", "photo-1551218808-94e220e084d2",
 ];
 
 async function main() {
@@ -91,27 +92,30 @@ async function main() {
     create: { email: "merchant@grubstub.test", name: "Demo Merchant", role: "MERCHANT", passwordHash: await bcrypt.hash("merchant123", 12), emailVerifiedAt: new Date() },
   });
   await prisma.user.upsert({
-    where: { email: "demo@grubstub.test" },
+    where: { email: "demo@bakunights.test" },
     update: { emailVerifiedAt: new Date() },
-    create: { email: "demo@grubstub.test", name: "Deal Hunter", passwordHash: await bcrypt.hash("password123", 12), emailVerifiedAt: new Date(), homeLat: 30.2672, homeLng: -97.7431 },
+    create: { email: "demo@bakunights.test", name: "Deal Hunter", passwordHash: await bcrypt.hash("Password123", 12), emailVerifiedAt: new Date(), homeLat: 40.4093, homeLng: 49.8671 },
   });
 
   const now = Date.now();
   for (let index = 0; index < restaurants.length; index += 1) {
     const [name, cuisine, address, lat, lng, rating, dietaryTags] = restaurants[index]!;
     const restaurant = await prisma.restaurant.create({ data: {
-      name, cuisine, address: `${address}, Austin, TX`, lat, lng, rating,
-      dietaryTags: [...dietaryTags], phone: `(512) 555-${String(1100 + index)}`,
-      hoursJson: { Monday: "8:00 AM–10:00 PM", Tuesday: "8:00 AM–10:00 PM", Wednesday: "8:00 AM–10:00 PM", Thursday: "8:00 AM–10:00 PM", Friday: "8:00 AM–11:00 PM", Saturday: "9:00 AM–11:00 PM", Sunday: "9:00 AM–9:00 PM" },
+      name, cuisine, address, lat, lng, rating,
+      dietaryTags: [...dietaryTags], phone: `+994 50 555 ${String(1000 + index).slice(-4)}`,
+      hoursJson: { Monday: "12:00-00:00", Tuesday: "12:00-00:00", Wednesday: "12:00-00:00", Thursday: "12:00-01:00", Friday: "12:00-02:00", Saturday: "12:00-02:00", Sunday: "12:00-00:00" },
       photoUrl: `https://images.unsplash.com/${photos[index % photos.length]}?auto=format&fit=crop&w=1200&q=80`,
       ownerUserId: index < 3 ? merchant.id : null,
       claimStatus: index < 3 ? "verified" : "unclaimed",
+      autoApproveOffers: index < 3,
     } });
     await prisma.deal.create({ data: {
       restaurantId: restaurant.id,
       title: titles[index]!, description: descriptions[index]!, discountPct: discounts[index]!, tag: tags[index]!,
       dietaryTags: [...dietaryTags], startsAt: new Date(now - 60 * 60 * 1000),
       endsAt: new Date(now + ((index % 5) + 2) * 60 * 60 * 1000 + 2 * 24 * 60 * 60 * 1000),
+      offerType: index % 4 === 0 ? "combo" : "discount",
+      menuItem: index % 3 === 0 ? titles[index]!.replace(" deal", "") : null,
       status: index < 3 ? "pending_review" : "approved",
       isActive: index >= 3,
       submittedByUserId: index < 3 ? merchant.id : admin.id,
@@ -133,7 +137,7 @@ async function main() {
     });
     await prisma.restaurant.update({ where: { id: unclaimedVenue.id }, data: { claimStatus: "pending_verification" } });
   }
-  console.log(`Seeded ${restaurants.length} venues, approved deals, pending deals, admins, and one claim request.`);
+  console.log(`Seeded ${restaurants.length} Baku venues, approved offers, pending merchant offers, admins, and one claim request.`);
 }
 
 main().finally(() => prisma.$disconnect());

@@ -681,7 +681,7 @@ function LiveOffers() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    api<{ deals: Deal[] }>("/deals?lat=30.2672&lng=-97.7431&radius=100&all=true&sort=ending")
+    api<{ deals: Deal[] }>("/deals?lat=40.4093&lng=49.8671&radius=100&all=true&sort=ending")
       .then((result) => { if (!cancelled) { setDeals(result.deals); setError(""); } })
       .catch((reason) => { if (!cancelled) setError(reason instanceof Error ? reason.message : "Could not load live offers"); })
       .finally(() => { if (!cancelled) setLoading(false); });
