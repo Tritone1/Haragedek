@@ -7,7 +7,7 @@ dotenv.config({ path: [resolve(process.cwd(), ".env"), resolve(process.cwd(), ".
 const schema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   PORT: z.coerce.number().default(4000),
-  API_HOST: z.string().default("127.0.0.1"),
+  API_HOST: z.string().default(process.env.NODE_ENV === "production" ? "0.0.0.0" : "127.0.0.1"),
   DATABASE_URL: z.string().min(1),
   WEB_ORIGIN: z.string().url().default("http://localhost:5173"),
   SESSION_SECRET: z.string().min(16),

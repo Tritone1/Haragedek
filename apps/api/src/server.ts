@@ -5,6 +5,9 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import pg from "pg";
+import { existsSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { env } from "./env.js";
 import { passport } from "./auth/passport.js";
 import { prisma } from "./db.js";
@@ -22,6 +25,8 @@ import { sendSavedDealExpiryNotifications } from "./lib/push.js";
 const app = express();
 const PgSession = connectPgSimple(session);
 const pool = new pg.Pool({ connectionString: env.DATABASE_URL });
+const currentDir = dirname(fileURLToPath(import.meta.url));
+const webDistDir = resolve(currentDir, "../../web/dist");
 
 app.set("trust proxy", 1);
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
@@ -68,6 +73,15 @@ app.use("/api/merchant", merchantRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/push", pushRouter);
 app.use("/api/places", placesRouter);
+
+if (env.NODE_ENV === "production" && existsSync(webDistDir)) {
+  app.use(express.static(webDistDir));
+  app.use((req, res, next) => {
+    if (req.method !== "GET" || req.path.startsWith("/api/")) return next();
+    res.sendFile(resolve(webDistDir, "index.html"));
+  });
+}
+
 app.use(notFound);
 app.use(errorHandler);
 
